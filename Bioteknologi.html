@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis IPA: Bioteknologi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+            position: relative;
+        }
+        .header-main-title {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        h1 {
+            color: #0056b3;
+            margin: 0;
+            font-size: 2.2em;
+        }
+        .author-info {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .author-info p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .author-info p:first-child {
+            font-weight: bold;
+            color: #333;
+            font-size: 1em;
+        }
+        .header-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0056b3;
+            z-index: 10;
+        }
+        .left-header-image {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #0056b3;
+            z-index: 10;
+        }
+        h2 {
+            color: #0056b3;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .question {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .question p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        #timeLimitDisplay {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 5px;
+            margin-top: 50px;
+        }
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            display: none;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .cooldown-message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #d9534f;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #d9534f;
+            border-radius: 5px;
+            background-color: #ffe0e0;
+        }
+        @media (max-width: 600px) {
+            .header-image, .left-header-image {
+                position: static;
+                margin: 10px auto;
+                display: block;
+            }
+            .header-main-title, .author-info {
+                text-align: center;
+            }
+            .container {
+                position: static;
+            }
+            #timeLimitDisplay {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-main-title">
+            <h1>Kuis IPA: Bioteknologi</h1>
+        </div>
+        <div class="author-info">
+            <p>By. Torus Manuntun Nababan, S.Pd.,M.Pd</p>
+            <p>(Pengembang Soal Kuis)</p>
+        </div>
+        <img src="logo.png" alt="Foto Torus Manuntun Nababan, S.Pd.,M.Pd" class="header-image">
+        <img src="jas.jpg" alt="Ilustrasi Jas" class="left-header-image">
+
+        <p id="timeLimitDisplay">Waktu pengerjaan: <span id="timeLimit">30</span> menit</p>
+        <div id="timer">Waktu tersisa: 30:00</div>
+
+        <form id="quizForm">
+            <h2>Identitas Siswa</h2>
+            <div class="form-group">
+                <label for="sekolah">Nama Sekolah:</label>
+                <input type="text" id="sekolah" name="sekolah" required>
+            </div>
+            <div class="form-group">
+                <label for="nama">Nama Siswa:</label>
+                <input type="text" id="nama" name="nama" required>
+            </div>
+            <div class="form-group">
+                <label for="kelas">Kelas:</label>
+                <input type="text" id="kelas" name="kelas" required>
+            </div>
+            <div class="form-group">
+                <label for="semester">Semester:</label>
+                <select id="semester" name="semester" required>
+                    <option value="">Pilih Semester</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tahunAjaran">Tahun Ajaran:</label>
+                <input type="text" id="tahunAjaran" name="tahunAjaran" placeholder="Contoh: 2024/2025" required>
+            </div>
+
+            <hr>
+
+            <h2>Soal Kuis</h2>
+            <div id="questionsContainer">
+                </div>
+
+            <button type="submit">Selesai Kuis</button>
+        </form>
+
+        <div id="results">
+            <h2>Hasil Kuis</h2>
+            <p><strong>Nama Siswa:</strong> <span id="resultNama"></span></p>
+            <p><strong>Skor Anda:</strong> <span id="score"></span></p>
+            <p id="message"></p>
+            <h3>Detail Jawaban:</h3>
+            <div id="answerDetails">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Pengertian dan jenis: konvensional dan modern (6 soal)
+            {
+                topic: "Bioteknologi: Pengertian dan Jenis",
+                question: "Bioteknologi adalah pemanfaatan makhluk hidup, seperti bakteri atau jamur, untuk menghasilkan produk atau jasa.",
+                options: ["Benar", "Salah", "Hanya menggunakan mesin", "Hanya menggunakan tumbuhan"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Pengertian dan Jenis",
+                question: "Bioteknologi konvensional biasanya memanfaatkan mikroorganisme secara langsung dan prosesnya sederhana, seperti pembuatan...",
+                options: ["Antibiotik", "Yogurt", "Vaksin", "Insulin"],
+                answer: "Yogurt"
+            },
+            {
+                topic: "Bioteknologi: Pengertian dan Jenis",
+                question: "Bioteknologi modern melibatkan rekayasa genetika atau teknik canggih lainnya untuk menghasilkan produk.",
+                options: ["Benar", "Salah", "Hanya melibatkan proses kimia", "Hanya menggunakan alat tradisional"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Pengertian dan Jenis",
+                question: "Contoh bioteknologi konvensional adalah pembuatan tempe yang menggunakan jamur.",
+                options: ["Benar", "Salah", "Tempe dibuat tanpa jamur", "Tempe adalah bioteknologi modern"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Pengertian dan Jenis",
+                question: "Bioteknologi modern bertujuan untuk mendapatkan hasil yang lebih tepat dan cepat.",
+                options: ["Benar", "Salah", "Bertujuan memperlambat proses", "Tidak ada tujuannya"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Pengertian dan Jenis",
+                question: "Apa perbedaan utama antara bioteknologi konvensional dan modern?",
+                options: ["Bioteknologi konvensional menggunakan teknologi canggih, modern tidak", "Bioteknologi modern menggunakan rekayasa genetika, konvensional tidak", "Bioteknologi konvensional hanya untuk makanan, modern untuk obat", "Tidak ada perbedaan"],
+                answer: "Bioteknologi modern menggunakan rekayasa genetika, konvensional tidak"
+            },
+
+            // Contoh: fermentasi tape, yoghurt, antibiotik (8 soal)
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Proses pembuatan tape menggunakan ragi, yang merupakan contoh dari proses...",
+                options: ["Pembakaran", "Pendinginan", "Fermentasi", "Pencampuran"],
+                answer: "Fermentasi"
+            },
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Yoghurt dibuat dari susu yang dibantu oleh bakteri baik.",
+                options: ["Benar", "Salah", "Dibuat dari air", "Dibuat dari gula"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Pembuatan keju menggunakan bakteri dan jamur untuk mengubah susu.",
+                options: ["Benar", "Salah", "Keju dibuat hanya dengan direbus", "Keju dibuat dari kedelai"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Antibiotik seperti penisilin dihasilkan dari jamur tertentu.",
+                options: ["Benar", "Salah", "Dihasilkan dari buah-buahan", "Dihasilkan dari mesin"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Pembuatan roti menggunakan ragi (yeast) untuk membuat adonan mengembang. Ini termasuk bioteknologi...",
+                options: ["Modern", "Konvensional", "Industri", "Kimia"],
+                answer: "Konvensional"
+            },
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Insulin (obat untuk penderita diabetes) sekarang dapat dibuat menggunakan bakteri yang dimodifikasi. Ini adalah contoh bioteknologi...",
+                options: ["Konvensional", "Tradisional", "Modern", "Sederhana"],
+                answer: "Modern"
+            },
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Apa yang digunakan dalam fermentasi tape untuk mengubah pati menjadi gula?",
+                options: ["Garam", "Ragi", "Air", "Gula"],
+                answer: "Ragi"
+            },
+            {
+                topic: "Bioteknologi: Contoh",
+                question: "Pembuatan kecap menggunakan jamur dan bakteri untuk mengolah kedelai.",
+                options: ["Benar", "Salah", "Kecap dibuat tanpa mikroorganisme", "Kecap dibuat dari buah"],
+                answer: "Benar"
+            },
+
+            // Dampak positif dan negatif (6 soal)
+            {
+                topic: "Bioteknologi: Dampak",
+                question: "Dampak positif bioteknologi dalam bidang pangan adalah dapat meningkatkan nilai gizi makanan.",
+                options: ["Benar", "Salah", "Mengurangi nilai gizi", "Tidak ada pengaruhnya"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Dampak",
+                question: "Bioteknologi modern dapat membantu menciptakan tanaman yang tahan terhadap hama.",
+                options: ["Benar", "Salah", "Membuat tanaman mudah terserang hama", "Tidak ada pengaruhnya pada tanaman"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Dampak",
+                question: "Salah satu dampak negatif bioteknologi modern adalah dapat menimbulkan risiko pada...",
+                options: ["Ekonomi", "Kesehatan jika tidak diawasi", "Olahraga", "Musik"],
+                answer: "Kesehatan jika tidak diawasi"
+            },
+            {
+                topic: "Bioteknologi: Dampak",
+                question: "Bioteknologi dapat digunakan untuk membersihkan lingkungan dari limbah (bioremediasi).",
+                options: ["Benar", "Salah", "Menambah limbah", "Tidak bisa membersihkan lingkungan"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Dampak",
+                question: "Dampak bioteknologi dalam bidang pertanian adalah dapat meningkatkan produksi panen.",
+                options: ["Benar", "Salah", "Menurunkan panen", "Tidak ada pengaruhnya"],
+                answer: "Benar"
+            },
+            {
+                topic: "Bioteknologi: Dampak",
+                question: "Salah satu risiko dari bioteknologi adalah kemungkinan munculnya alergi pada manusia dari produk rekayasa genetika.",
+                options: ["Benar", "Salah", "Tidak ada risiko", "Hanya risiko keuangan"],
+                answer: "Benar"
+            }
+        ];
+
+        const timeLimitInMinutes = 30; 
+        let timeLeft = timeLimitInMinutes * 60; // seconds
+        let timerInterval;
+
+        const quizForm = document.getElementById('quizForm');
+        const questionsContainer = document.getElementById('questionsContainer');
+        const timerDisplay = document.getElementById('timer');
+        const resultsDiv = document.getElementById('results');
+        const resultNama = document.getElementById('resultNama');
+        const scoreDisplay = document.getElementById('score');
+        const messageDisplay = document.getElementById('message');
+        const answerDetailsDiv = document.getElementById('answerDetails');
+
+        // Durasi cooldown: 1 jam dalam milidetik
+        const cooldownDuration = 60 * 60 * 1000;
+        const lastQuizCompletionKey = 'lastQuizCompletionTime';
+
+        // Fungsi untuk mengacak array (algoritma Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Fungsi untuk menghasilkan dan menampilkan pertanyaan
+        function generateQuestions() {
+            // Pastikan jumlah soal adalah 20
+            if (questions.length !== 20) {
+                console.error("Jumlah soal tidak sesuai (harus 20).");
+            }
+            
+            shuffleArray(questions);
+            questionsContainer.innerHTML = '';
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                const shuffledOptions = [...q.options];
+                shuffleArray(shuffledOptions);
+
+                questionDiv.innerHTML = `
+                    <p>${index + 1}. ${q.question}</p>
+                    <div class="options">
+                        ${shuffledOptions.map((option) => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${option}"> ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Fungsi untuk memulai timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `Waktu tersisa: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu habis! Kuis akan otomatis disubmit.");
+                    quizForm.dispatchEvent(new Event('submit'));
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Penanganan saat formulir disubmit
+        quizForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            clearInterval(timerInterval);
+
+            let totalScore = 0;
+            const pointsPerCorrect = 5; // 5 poin per soal
+            const maxPossibleScore = questions.length * pointsPerCorrect; // 20 * 5 = 100
+
+            const answers = {};
+
+            questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOption ? selectedOption.value : null;
+                answers[`q${index}`] = userAnswer;
+
+                if (userAnswer === q.answer) {
+                    totalScore += pointsPerCorrect;
+                }
+            });
+
+            // Simpan waktu penyelesaian kuis ke Local Storage
+            localStorage.setItem(lastQuizCompletionKey, Date.now());
+
+            // Tampilkan hasil
+            resultNama.textContent = document.getElementById('nama').value;
+            scoreDisplay.textContent = `${totalScore} / ${maxPossibleScore}`;
+
+            // Tentukan pesan berdasarkan skor
+            // Nilai Pemenang ditentukan oleh skor >= 70
+            if (totalScore >= 70) { 
+                messageDisplay.textContent = "Selamat Anda Pemenang";
+                messageDisplay.style.color = "green";
+            } else {
+                messageDisplay.textContent = "Anda Belum Beruntung, Belajar Lagi Ya";
+                messageDisplay.style.color = "red";
+            }
+
+            // Tampilkan detail jawaban
+            answerDetailsDiv.innerHTML = '';
+            questions.forEach((q, index) => {
+                const userAnswer = answers[`q${index}`];
+                const detailDiv = document.createElement('p');
+                let answerStatusClass = '';
+                let userAnswerText = userAnswer !== null ? userAnswer : 'Tidak dijawab';
+
+                if (userAnswer === q.answer) {
+                    answerStatusClass = 'correct';
+                } else if (userAnswer !== null) {
+                    answerStatusClass = 'incorrect';
+                } else {
+                    answerStatusClass = '';
+                }
+
+                detailDiv.innerHTML = `
+                    <strong>${index + 1}. ${q.question}</strong><br>
+                    Jawaban Anda: <span class="${answerStatusClass}">
+                        ${userAnswerText}
+                    </span><br>
+                    Kunci Jawaban: <span class="correct">${q.answer}</span>
+                `;
+                answerDetailsDiv.appendChild(detailDiv);
+            });
+
+            quizForm.style.display = 'none';
+            resultsDiv.style.display = 'block';
+        });
+
+        // Inisialisasi kuis dan cek cooldown saat halaman dimuat
+        window.onload = function() {
+            const lastCompletionTime = localStorage.getItem(lastQuizCompletionKey);
+            if (lastCompletionTime) {
+                const timeElapsed = Date.now() - parseInt(lastCompletionTime);
+                if (timeElapsed < cooldownDuration) {
+                    const remainingTime = cooldownDuration - timeElapsed;
+                    const minutes = Math.floor(remainingTime / (1000 * 60));
+                    const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                    quizForm.style.display = 'none';
+                    timerDisplay.style.display = 'none';
+                    document.getElementById('timeLimitDisplay').style.display = 'none';
+                    const cooldownMessageDiv = document.createElement('div');
+                    cooldownMessageDiv.classList.add('cooldown-message');
+                    cooldownMessageDiv.innerHTML = `
+                        Anda telah menyelesaikan kuis ini. <br>
+                        Silakan coba lagi dalam **${minutes.toString().padStart(2, '0')} menit dan ${seconds.toString().padStart(2, '0')} detik**.
+                    `;
+                    document.querySelector('.container').insertBefore(cooldownMessageDiv, document.getElementById('quizForm'));
+                    return;
+                }
+            }
+            // Jika tidak ada cooldown atau cooldown sudah berakhir, inisialisasi kuis
+            generateQuestions();
+            startTimer();
+        };
+    </script>
+</body>
+</html>
